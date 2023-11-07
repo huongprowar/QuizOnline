@@ -28,13 +28,8 @@ public partial class QuizOnlineContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-		var builder = new ConfigurationBuilder()
-							  .SetBasePath(Directory.GetCurrentDirectory())
-							  .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-		IConfigurationRoot configuration = builder.Build();
-		optionsBuilder.UseSqlServer(configuration.GetConnectionString("DBContext"));
-	}
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("server=DESKTOP-1P97N9S;database=QuizOnline;uid=sa;pwd=12345678;Encrypt=false;Trusted_Connection=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,14 +73,18 @@ public partial class QuizOnlineContext : DbContext
 
         modelBuilder.Entity<Result>(entity =>
         {
-            entity.ToTable("Result");
+            entity
+                .HasNoKey()
+                .ToTable("Result");
 
-            entity.HasOne(d => d.Answer).WithMany(p => p.Results)
+            entity.Property(e => e.TestId).ValueGeneratedOnAdd();
+
+            entity.HasOne(d => d.Answer).WithMany()
                 .HasForeignKey(d => d.AnswerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Result_Answer");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Results)
+            entity.HasOne(d => d.User).WithMany()
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Result_User");
@@ -95,9 +94,12 @@ public partial class QuizOnlineContext : DbContext
         {
             entity.ToTable("Test");
 
+            entity.Property(e => e.TestCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
             entity.HasOne(d => d.Course).WithMany(p => p.Tests)
                 .HasForeignKey(d => d.CourseId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Test_Course");
         });
 

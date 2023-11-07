@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PRN231_Project_QuizOnline_API.Models;
-using PRN231_Project_QuizOnline_API.Repositories;
 
 namespace PRN231_Project_QuizOnline_API.Controllers
 {

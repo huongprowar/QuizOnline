@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PRN231_Project_QuizOnline_API.Models;
 
@@ -7,13 +8,11 @@ public partial class Answer
 {
     public int AnswerId { get; set; }
 
-    public string AnswerContent { get; set; } = null!;
-
-    public bool IsCorrect { get; set; }
-
-    public int QuestionId { get; set; }
-
+    public string? AnswerContent { get; set; } = null!;
+    [JsonIgnore]
+    public bool? IsCorrect { get; set; }
+    [JsonIgnore]
+    public int? QuestionId { get; set; }
+    [JsonIgnore]
     public virtual Question Question { get; set; } = null!;
-
-    public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 }
