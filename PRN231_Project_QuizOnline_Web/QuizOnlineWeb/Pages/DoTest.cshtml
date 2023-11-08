@@ -1,0 +1,26 @@
+﻿@page
+@model QuizOnlineWeb.Pages.DoTestModel
+@{
+}
+<form method="POST" asp-page-handler="SubmitTest">
+
+@foreach (var question in Model.questionDTOs)
+{
+	<table>
+		<tr>
+			<th>@question.Question.QuestionContent</th>
+		</tr>
+		<tr>
+			@foreach (var answer in question.Answers)
+			{
+			<tr>
+				<td>
+					<input type="checkbox" name="answer" />@answer.AnswerContent
+				</td>
+			</tr>
+			}
+		</tr>
+	</table>
+}
+<button type="submit" id="submit">Submit</button>
+</form>

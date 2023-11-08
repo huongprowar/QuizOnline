@@ -16,7 +16,7 @@ namespace PRN231_Project_QuizOnline_API.Controllers
         {
             quizOnlineContext = new QuizOnlineContext();
             List<QuestionDTO> listQuestion  = new List<QuestionDTO>();
-            
+
             //QuizOnlineContext answerContext = new QuizOnlineContext();
             //foreach (var question in questions)
             //{
@@ -24,8 +24,10 @@ namespace PRN231_Project_QuizOnline_API.Controllers
             //    questionDTO.Question = question;
             //    questionDTO.Answers = answerContext.Answers.Include(x => x.Question).Where(x => x.Question.QuestionId == question.QuestionId).ToList();
             //    listQuestion.Add(questionDTO);
-            //}
-            return Ok(quizOnlineContext.Questions.Include(x => x.Test).Where(x => x.Test.TestCode == code).Include(x => x.Answers).ToList());
+            //};
+            var list = quizOnlineContext.Questions.Include(x => x.Test).Where(x => x.Test.TestCode == code).Include(x => x.Answers).ToList();
+            list.ForEach(x => listQuestion.Add(new QuestionDTO(x, x.Answers.ToList())));
+            return Ok(listQuestion);
         }
     }
 }
