@@ -10,11 +10,11 @@ namespace PRN231_Project_QuizOnline_API.Controllers
     [ApiController]
     public class QuestionController : ControllerBase
     {
-        QuizOnlineContext quizOnlineContext { get; set; }
+        QuizOnlineContext _context { get; set; }
         [HttpGet("/{code}")]
         public IActionResult GetAllQuestionFromQuizCode(string code)
         {
-            quizOnlineContext = new QuizOnlineContext();
+            _context = new QuizOnlineContext();
             List<QuestionDTO> listQuestion  = new List<QuestionDTO>();
 
             //QuizOnlineContext answerContext = new QuizOnlineContext();
@@ -25,8 +25,31 @@ namespace PRN231_Project_QuizOnline_API.Controllers
             //    questionDTO.Answers = answerContext.Answers.Include(x => x.Question).Where(x => x.Question.QuestionId == question.QuestionId).ToList();
             //    listQuestion.Add(questionDTO);
             //};
-            var list = quizOnlineContext.Questions.Include(x => x.Test).Where(x => x.Test.TestCode == code).Include(x => x.Answers).ToList();
+            var list = _context.Questions.Include(x => x.Test).Where(x => x.Test.TestCode == code).Include(x => x.Answers).ToList();
             list.ForEach(x => listQuestion.Add(new QuestionDTO(x, x.Answers.ToList())));
+            return Ok(listQuestion);
+        }
+        [HttpPost("/submit{testcode}")]
+        public IActionResult SubmitTest(string testcode, List<RequestAnswerDTO> answers)
+        {
+            int numberCorrect = 0;
+            _context = new QuizOnlineContext(); 
+            List<Question> listQuestion = _context.Questions.Include(x => x.Answers.Where(answer => (bool)answer.IsCorrect)).Include(x => x.Test).Where(x => x.Test.TestCode == testcode).ToList();
+            foreach (var question in listQuestion)
+            {
+                RequestAnswerDTO requestAnswerDto = answers.FirstOrDefault(x => x.QuestionId == question.QuestionId);
+                if (answers.Count != requestAnswerDto.ListAnswerId.Count)
+                {
+                    continue;
+                }
+                foreach (var answer in requestAnswerDto.ListAnswerId)
+                {
+                    Answer tempAnswer = (question.Answers.FirstOrDefault(x => x.AnswerId == answer));
+                    if (tempAnswer!=null) question.Answers.Remove(tempAnswer);
+                }
+                if(question.Answers.Count ==0) numberCorrect++;
+
+            }
             return Ok(listQuestion);
         }
     }

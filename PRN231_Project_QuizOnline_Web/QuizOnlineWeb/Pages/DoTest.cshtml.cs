@@ -8,6 +8,8 @@ namespace QuizOnlineWeb.Pages
     public class DoTestModel : PageModel
     {
         public List<ResponseQuestionDTO> questionDTOs { get; set; } = new List<ResponseQuestionDTO> {};
+        [BindProperty]
+        public List<string> answers { get;set; }
         public async Task<IActionResult> OnGetAsync(List<ResponseQuestionDTO> listQuestion)
         {
             //questionDTOs = TempData["listQuestion"];
@@ -17,8 +19,9 @@ namespace QuizOnlineWeb.Pages
 
 			return Page();
         }        
-        public async Task<IActionResult> OnPostSubmitTest(string data)
+        public async Task<IActionResult> OnPostSubmitTest()
         {
+
             return Page();
         }
     }

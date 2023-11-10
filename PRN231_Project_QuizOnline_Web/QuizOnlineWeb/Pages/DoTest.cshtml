@@ -15,12 +15,15 @@
 			{
 			<tr>
 				<td>
-					<input type="checkbox" name="answer" />@answer.AnswerContent
+					<input type="checkbox" name="answers" value='@question.Question.QuestionId+@answer.AnswerId'/>@answer.AnswerContent					
 				</td>
 			</tr>
 			}
 		</tr>
 	</table>
 }
-<button type="submit" id="submit">Submit</button>
+<button type="submit" id="submit" onclick="submitAnswer()">Submit</button>
 </form>
+<script>
+	
+</script>
