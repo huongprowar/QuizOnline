@@ -12,4 +12,5 @@ namespace PRN231_Project_QuizOnline_API.DTO
             Question = question;
         }
     }
+    
 }

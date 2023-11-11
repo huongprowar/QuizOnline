@@ -8,11 +8,11 @@ public partial class Answer
 {
     public int AnswerId { get; set; }
 
-    public string? AnswerContent { get; set; } = null!;
+    public string? AnswerContent { get; set; }
     [JsonIgnore]
     public bool? IsCorrect { get; set; }
-    [JsonIgnore]
+
     public int? QuestionId { get; set; }
-    [JsonIgnore]
-    public virtual Question Question { get; set; } = null!;
+	[JsonIgnore]
+	public virtual Question? Question { get; set; }
 }

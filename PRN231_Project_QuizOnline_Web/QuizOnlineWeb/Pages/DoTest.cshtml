@@ -3,7 +3,7 @@
 @{
 }
 <form method="POST" asp-page-handler="SubmitTest">
-
+	<input type="hidden" name="TestCode" value="@Model.TestCode"/>
 @foreach (var question in Model.questionDTOs)
 {
 	<table>
@@ -15,7 +15,7 @@
 			{
 			<tr>
 				<td>
-					<input type="checkbox" name="answers" value='@question.Question.QuestionId+@answer.AnswerId'/>@answer.AnswerContent					
+					<input type="checkbox" name="Answers" value='@question.Question.QuestionId+@answer.AnswerId'/>@answer.AnswerContent					
 				</td>
 			</tr>
 			}

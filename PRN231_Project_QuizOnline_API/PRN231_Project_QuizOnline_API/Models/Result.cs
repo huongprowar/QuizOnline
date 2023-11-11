@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PRN231_Project_QuizOnline_API.Models;
 
 public partial class Result
 {
-    public int? UserId { get; set; }
-
-    public int? AnswerId { get; set; }
+    public int ResultId { get; set; }
 
     public int? TestId { get; set; }
 
-    public virtual Answer Answer { get; set; } = null!;
-
-    public virtual User User { get; set; } = null!;
+    public int? UserId { get; set; }
+    [JsonIgnore]
+    public virtual Test? Test { get; set; }
+	[JsonIgnore]
+	public virtual User? User { get; set; }
 }

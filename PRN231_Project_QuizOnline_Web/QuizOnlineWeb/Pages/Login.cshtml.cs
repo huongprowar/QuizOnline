@@ -58,6 +58,7 @@ namespace QuizOnlineWeb.Pages
 						string data = content.ReadAsStringAsync().Result;
 						listQuestion = JsonConvert.DeserializeObject<List<ResponseQuestionDTO>>(data);
 						TempData["listQuestion"] = data;
+						TempData["TestCode"] = testCode;
 						ViewData["listQuestion"] = listQuestion;
 					}
 					return new RedirectToPageResult("DoTest", listQuestion);

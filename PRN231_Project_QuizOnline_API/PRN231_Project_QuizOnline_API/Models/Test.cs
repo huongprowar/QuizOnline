@@ -10,9 +10,9 @@ public partial class Test
 
     public int? CourseId { get; set; }
 
-    public string? TestCode { get; set; } = null!;
-
-    public virtual Course? Course { get; set; }
-    [JsonIgnore]
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+    public string? TestCode { get; set; }
+	[JsonIgnore]
+	public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+	[JsonIgnore]
+	public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 }

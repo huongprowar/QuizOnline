@@ -7,9 +7,9 @@ public partial class User
 {
     public int UserId { get; set; }
 
-    public string Username { get; set; } = null!;
+    public string? Username { get; set; }
 
-    public string Password { get; set; } = null!;
+    public string? Password { get; set; }
 
     public string? FirstName { get; set; }
 
@@ -17,5 +17,5 @@ public partial class User
 
     public int Role { get; set; }
 
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+    public virtual ICollection<Result> Results { get; set; } = new List<Result>();
 }

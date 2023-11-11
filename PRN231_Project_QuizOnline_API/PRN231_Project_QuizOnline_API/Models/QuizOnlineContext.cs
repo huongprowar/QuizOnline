@@ -17,11 +17,11 @@ public partial class QuizOnlineContext : DbContext
 
     public virtual DbSet<Answer> Answers { get; set; }
 
-    public virtual DbSet<Course> Courses { get; set; }
-
     public virtual DbSet<Question> Questions { get; set; }
 
     public virtual DbSet<Result> Results { get; set; }
+
+    public virtual DbSet<ResultDetail> ResultDetails { get; set; }
 
     public virtual DbSet<Test> Tests { get; set; }
 
@@ -29,10 +29,9 @@ public partial class QuizOnlineContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-
         var builder = new ConfigurationBuilder()
-                                      .SetBasePath(Directory.GetCurrentDirectory())
-                                      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                              .SetBasePath(Directory.GetCurrentDirectory())
+                              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
         IConfigurationRoot configuration = builder.Build();
         optionsBuilder.UseSqlServer(configuration.GetConnectionString("DBContext"));
     }
@@ -43,33 +42,18 @@ public partial class QuizOnlineContext : DbContext
         {
             entity.ToTable("Answer");
 
-            entity.Property(e => e.AnswerId).ValueGeneratedNever();
             entity.Property(e => e.AnswerContent).HasMaxLength(50);
 
             entity.HasOne(d => d.Question).WithMany(p => p.Answers)
                 .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Answer_Question");
-        });
-
-        modelBuilder.Entity<Course>(entity =>
-        {
-            entity.ToTable("Course");
-
-            entity.Property(e => e.CourseName).HasMaxLength(50);
-            entity.Property(e => e.Image).HasMaxLength(50);
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .IsFixedLength();
-
-            entity.HasOne(d => d.Author).WithMany(p => p.Courses)
-                .HasForeignKey(d => d.AuthorId)
-                .HasConstraintName("FK_Course_User");
         });
 
         modelBuilder.Entity<Question>(entity =>
         {
             entity.ToTable("Question");
+
+            entity.Property(e => e.QuestionContent).HasMaxLength(50);
 
             entity.HasOne(d => d.Test).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.TestId)
@@ -79,21 +63,30 @@ public partial class QuizOnlineContext : DbContext
 
         modelBuilder.Entity<Result>(entity =>
         {
+            entity.ToTable("Result");
+
+            entity.HasOne(d => d.Test).WithMany(p => p.Results)
+                .HasForeignKey(d => d.TestId)
+                .HasConstraintName("FK_Result_Test");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Results)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Result_User");
+        });
+
+        modelBuilder.Entity<ResultDetail>(entity =>
+        {
             entity
                 .HasNoKey()
-                .ToTable("Result");
+                .ToTable("ResultDetail");
 
-            entity.Property(e => e.TestId).ValueGeneratedOnAdd();
+            entity.HasOne(d => d.Question).WithMany()
+                .HasForeignKey(d => d.QuestionId)
+                .HasConstraintName("FK_ResultDetail_Question");
 
-            entity.HasOne(d => d.Answer).WithMany()
-                .HasForeignKey(d => d.AnswerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Result_Answer");
-
-            entity.HasOne(d => d.User).WithMany()
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Result_User");
+            entity.HasOne(d => d.Result).WithMany()
+                .HasForeignKey(d => d.ResultId)
+                .HasConstraintName("FK_ResultDetail_Result");
         });
 
         modelBuilder.Entity<Test>(entity =>
@@ -103,10 +96,6 @@ public partial class QuizOnlineContext : DbContext
             entity.Property(e => e.TestCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.Course).WithMany(p => p.Tests)
-                .HasForeignKey(d => d.CourseId)
-                .HasConstraintName("FK_Test_Course");
         });
 
         modelBuilder.Entity<User>(entity =>
