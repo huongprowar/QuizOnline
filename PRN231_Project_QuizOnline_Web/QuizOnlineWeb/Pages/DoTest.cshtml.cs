@@ -53,16 +53,17 @@ namespace QuizOnlineWeb.Pages
 				{
 					using (HttpContent content = res.Content)
 					{
-						//string data = content.ReadAsStringAsync().Result;
-						//listQuestion = JsonConvert.DeserializeObject<List<ResponseQuestionDTO>>(data);
-						//TempData["listQuestion"] = data;
-						//ViewData["listQuestion"] = listQuestion;
-						return Redirect("/Index");
+						string data = content.ReadAsStringAsync().Result;
+
+						List<RequestAnswerDTO> listResult = JsonConvert.DeserializeObject<List<RequestAnswerDTO>>(data);
+						TempData["listQuestion"] = data;
+						ViewData["listQuestion"] = listQuestion;
+						return new RedirectToPageResult("Result", listQuestion);
 					}
 					//return new RedirectToPageResult("DoTest", listQuestion);
 				}
 			}
-			return Page();
-        }
+			
+		}
     }
 }

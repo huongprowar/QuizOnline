@@ -33,10 +33,18 @@ namespace PRN231_Project_QuizOnline_API.Controllers
 				UserId = userId,
 			};
 			await _context.Results.AddAsync(result);
+            await _context.SaveChangesAsync();
 			int numberCorrect = 0;            
+            List<ResponseAnswerDTO> listResponseAnswer = new List<ResponseAnswerDTO>();
             List<Question> listQuestion = _context.Questions.Include(x => x.Answers.Where(answer => (bool)answer.IsCorrect)).Include(x => x.Test).Where(x => x.Test.TestCode == testcode).ToList();
             foreach (var question in listQuestion)
             {
+                ResponseAnswerDTO responseAnswerDTO = new ResponseAnswerDTO();
+
+                responseAnswerDTO.QuestionContent = question.QuestionContent;
+                responseAnswerDTO.ListAnswerContent = question.Answers.Select(x => x.AnswerContent).ToList();
+                responseAnswerDTO.IsCorrected = false;
+
                 RequestAnswerDTO requestAnswerDto = answers.FirstOrDefault(x => x.QuestionId == question.QuestionId);
                 if (question.Answers.Count != requestAnswerDto.ListAnswerId.Count)
                 {
@@ -54,11 +62,19 @@ namespace PRN231_Project_QuizOnline_API.Controllers
                     Answer tempAnswer = (question.Answers.FirstOrDefault(x => x.AnswerId == answer));
                     if (tempAnswer!=null) question.Answers.Remove(tempAnswer);
                 }
-                if(question.Answers.Count ==0) numberCorrect++;
+                if (question.Answers.Count == 0)
+                {
+                    requestAnswerDto.IsCorrected = true;
+                    numberCorrect++;
+                }
+                else
+                {
+					requestAnswerDto.IsCorrected = false;
+				}
             }
-			
+            _context.SaveChangesAsync();
            
-			return Ok(numberCorrect);
+			return Ok(answers);
         }
     }
 }

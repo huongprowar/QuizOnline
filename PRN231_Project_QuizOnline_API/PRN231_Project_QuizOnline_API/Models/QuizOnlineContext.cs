@@ -27,16 +27,15 @@ public partial class QuizOnlineContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        var builder = new ConfigurationBuilder()
-                              .SetBasePath(Directory.GetCurrentDirectory())
-                              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        IConfigurationRoot configuration = builder.Build();
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("DBContext"));
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	{
+		var builder = new ConfigurationBuilder()
+							  .SetBasePath(Directory.GetCurrentDirectory())
+							  .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+		IConfigurationRoot configuration = builder.Build();
+		optionsBuilder.UseSqlServer(configuration.GetConnectionString("DBContext"));
+	}
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Answer>(entity =>
         {
@@ -76,16 +75,18 @@ public partial class QuizOnlineContext : DbContext
 
         modelBuilder.Entity<ResultDetail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("ResultDetail");
+            entity.HasKey(e => new { e.ResultId, e.QuestionId, e.AnswerId });
 
-            entity.HasOne(d => d.Question).WithMany()
+            entity.ToTable("ResultDetail");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.ResultDetails)
                 .HasForeignKey(d => d.QuestionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ResultDetail_Question");
 
-            entity.HasOne(d => d.Result).WithMany()
+            entity.HasOne(d => d.Result).WithMany(p => p.ResultDetails)
                 .HasForeignKey(d => d.ResultId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ResultDetail_Result");
         });
 
