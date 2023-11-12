@@ -48,17 +48,17 @@ namespace QuizOnlineWeb.Pages
 
 			using (HttpClient client = new HttpClient())
 			{
-				var url = URL_SUBMITTEST + TestCode + $"?userId={1}";
+                int id = Convert.ToInt32(HttpContext.Session.GetInt32("UserId"));
+                var url = URL_SUBMITTEST + TestCode + $"?userId={id}";
 				using (HttpResponseMessage res = await client.PostAsJsonAsync(url, listQuestion))
 				{
 					using (HttpContent content = res.Content)
 					{
 						string data = content.ReadAsStringAsync().Result;
 
-						List<RequestAnswerDTO> listResult = JsonConvert.DeserializeObject<List<RequestAnswerDTO>>(data);
-						TempData["listQuestion"] = data;
-						ViewData["listQuestion"] = listQuestion;
-						return new RedirectToPageResult("Result", listQuestion);
+						int resultId = JsonConvert.DeserializeObject<int>(data);
+
+						return Redirect($"/ResultDetail?ResultID={resultId}");
 					}
 					//return new RedirectToPageResult("DoTest", listQuestion);
 				}

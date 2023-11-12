@@ -1,10 +1,23 @@
 ﻿@page
 @model IndexModel
+@using Microsoft.AspNetCore.Http;
 @{
     ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+    {
+        <span>Xin chào, vui lòng đăng nhập để sử dụng phần mềm.</span>
+    <button class="btn btn-outline-success" onclick="window.location.href='/Login'" type="submit">
+        Login
+    </button>
+    }
+    else
+    {
+        <form asp-page="/Login" method="POST" asp-page-handler="EnterTest">
+            <input type="text" name="testCode"/>
+            <button type="submit">Enter test</button>
+        </form>
+    }
 </div>

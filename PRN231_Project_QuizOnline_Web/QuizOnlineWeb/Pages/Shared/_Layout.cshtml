@@ -25,6 +25,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
+                        @if (Context.Session.GetString("Username") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Dashboard">Dashboard</a>
+                            </li>
+                            <span>Xin chào, @Context.Session.GetString("Username")<text>&nbsp;</text></span>
+                            <form asp-page="/Login" method="post" asp-page-handler="Logout">
+                                <button class="ml-2 btn btn-outline-success" type="submit">
+                                    Logout
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-success" onclick="window.location.href='/Login'" type="submit">
+                                Login
+                            </button>
+                        }
                     </ul>
                 </div>
             </div>

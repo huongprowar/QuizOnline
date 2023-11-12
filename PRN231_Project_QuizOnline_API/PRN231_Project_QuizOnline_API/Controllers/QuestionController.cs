@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using PRN231_Project_QuizOnline_API.DTO;
 using PRN231_Project_QuizOnline_API.Models;
 
@@ -34,19 +35,28 @@ namespace PRN231_Project_QuizOnline_API.Controllers
 			};
 			await _context.Results.AddAsync(result);
             await _context.SaveChangesAsync();
-			int numberCorrect = 0;            
-            List<ResponseAnswerDTO> listResponseAnswer = new List<ResponseAnswerDTO>();
-            List<Question> listQuestion = _context.Questions.Include(x => x.Answers.Where(answer => (bool)answer.IsCorrect)).Include(x => x.Test).Where(x => x.Test.TestCode == testcode).ToList();
+			int numberCorrect = 0;
+            ResponseSubmitTest response = new ResponseSubmitTest();
+            response.TestCode = testcode;
+            List<SubmitAnswerDTO> listResponseAnswer = new List<SubmitAnswerDTO>();            
+            List<Question> listQuestion = _context.Questions.Include(x => x.Answers).Include(x => x.Test).Where(x => x.Test.TestCode == testcode).ToList();           
+
+
             foreach (var question in listQuestion)
             {
-                ResponseAnswerDTO responseAnswerDTO = new ResponseAnswerDTO();
+                SubmitAnswerDTO responseAnswerDTO = new SubmitAnswerDTO();
 
                 responseAnswerDTO.QuestionContent = question.QuestionContent;
                 responseAnswerDTO.ListAnswerContent = question.Answers.Select(x => x.AnswerContent).ToList();
                 responseAnswerDTO.IsCorrected = false;
+                responseAnswerDTO.SelectedAnswers = new List<string>();
+                listResponseAnswer.Add(responseAnswerDTO);
+
+                int correctAnswerCount = 0;
 
                 RequestAnswerDTO requestAnswerDto = answers.FirstOrDefault(x => x.QuestionId == question.QuestionId);
-                if (question.Answers.Count != requestAnswerDto.ListAnswerId.Count)
+                if (requestAnswerDto == null) continue;
+                if (question.Answers.Where(x => x.IsCorrect).ToList().Count != requestAnswerDto.ListAnswerId.Count)
                 {
                     continue;
                 }
@@ -60,21 +70,22 @@ namespace PRN231_Project_QuizOnline_API.Controllers
                     };
                     _context.ResultDetails.Add(resultDetail);
                     Answer tempAnswer = (question.Answers.FirstOrDefault(x => x.AnswerId == answer));
-                    if (tempAnswer!=null) question.Answers.Remove(tempAnswer);
-                }
-                if (question.Answers.Count == 0)
+                    responseAnswerDTO.SelectedAnswers.Add(tempAnswer.AnswerContent);
+                    if (tempAnswer != null && tempAnswer.IsCorrect) {
+                        correctAnswerCount++;
+                    };
+                }                
+                if (question.Answers.Where(x => x.IsCorrect).ToList().Count == correctAnswerCount)
                 {
-                    requestAnswerDto.IsCorrected = true;
+                    responseAnswerDTO.IsCorrected = true;
                     numberCorrect++;
                 }
-                else
-                {
-					requestAnswerDto.IsCorrected = false;
-				}
             }
+            response.Grade = ((float)numberCorrect/answers.Count)*10;
+            response.Answers = listResponseAnswer;
             _context.SaveChangesAsync();
            
-			return Ok(answers);
+			return Ok(result.ResultId);
         }
     }
 }

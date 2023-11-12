@@ -3,7 +3,8 @@
 @{
 }
 
-<form method="POST" asp-page-handler="EnterTest">
-	<input type="text" name="testCode" />
-	<button type="submit">PostTest</button>
+<form method="POST" asp-page-handler="Login">
+    <span>Username: <input type="text" name="username" asp-for="@Model.loginUser.username"/></span></br>
+    <span>Password: <input type="password" name="password" asp-for="@Model.loginUser.password" /></span>
+    <button type="submit">Login</button>
 </form>

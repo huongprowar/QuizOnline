@@ -1,0 +1,36 @@
+﻿@page
+@model QuizOnlineWeb.Pages.ResultModel
+@{
+}
+<h1>@Model.ResultList.TestCode</h1>
+<h6>Grade: @Html.FormatValue(@Model.ResultList.Grade,"{0:0.00}")</h6>
+@foreach (var answerResDTO in Model.ResultList.Answers)
+{
+    <table>
+        <tr>
+            @if (answerResDTO.IsCorrected)
+            {
+                <th style="color:green">@answerResDTO.QuestionContent</th>
+            }
+            else
+            {
+                <th style="color:red">@answerResDTO.QuestionContent</th>
+            }
+        </tr>
+        @foreach (var answer in answerResDTO.ListAnswerContent)
+        {
+            if (answerResDTO.SelectedAnswers.Contains(answer))
+            {
+                <tr>
+                    <td><input type="checkbox" checked disabled readonly>@answer</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td><input type="checkbox" readonly disabled>@answer</td>
+                </tr>
+            }
+        }       
+    </table>
+}

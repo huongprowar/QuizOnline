@@ -1,0 +1,17 @@
+﻿@page
+@model QuizOnlineWeb.Pages.DashboardModel
+@{
+}
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <th>TestCode</th>
+    </tr>
+    @foreach(var result in Model.ListResult)
+    {
+        <tr>
+            <td><a asp-page="ResultDetail" asp-route-ResultID="@result.ResultID">@result.ResultID</a></td>
+            <td>@result.TestCode</td>
+        </tr>
+    }
+</table>

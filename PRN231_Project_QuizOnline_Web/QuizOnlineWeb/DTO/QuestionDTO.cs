@@ -11,4 +11,16 @@ namespace QuizOnlineWeb.DTO
 		[JsonPropertyName("questionContent")]
 		public string? QuestionContent { get; set; }
 	}
+    public class ResponseQuestionDTO
+    {
+        [JsonPropertyName("question")]
+        public QuestionDTO Question { get; set; }
+        [JsonPropertyName("answers")]
+        public List<AnswerDTO> Answers { get; set; }
+    }
+	public class CreateQuestionDTO
+	{
+		public string QuestionContent { get; set; }
+		public List<string> Answers { get; set; } = new List<string>();
+	}
 }
